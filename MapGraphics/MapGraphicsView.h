@@ -19,6 +19,7 @@
 
 #include "guts/MapTileGraphicsObject.h"
 #include "guts/PrivateQGraphicsInfoSource.h"
+#include "ISceneState.h"
 
 class MAPGRAPHICSSHARED_EXPORT MapGraphicsView : public QWidget, public PrivateQGraphicsInfoSource
 {
@@ -39,6 +40,7 @@ public:
 
 public:
     explicit MapGraphicsView(MapGraphicsScene * scene=0, QWidget * parent = 0);
+    MapGraphicsView(QSharedPointer<ISceneState> state, MapGraphicsScene * scene=0, QWidget * parent = 0);
     virtual ~MapGraphicsView();
 
     void centerOn(const QPointF& pos);
@@ -64,6 +66,8 @@ public:
      */
     void setTileSource(QSharedPointer<MapTileSource> tSource);
 
+    void setSceneState(QSharedPointer<ISceneState> state);
+
     //pure-virtual from PrivateQGraphicsInfoSource
     quint8 zoomLevel() const;
     void setZoomLevel(quint8 nZoom, ZoomMode zMode = CenterZoom);
@@ -73,6 +77,7 @@ public:
     
 signals:
     void zoomLevelChanged(quint8 nZoom);
+    void sceneStateChanged(QSharedPointer<ISceneState> state);
     
 public slots:
 
@@ -91,6 +96,7 @@ private:
     QPointer<MapGraphicsScene> _scene;
     QPointer<QGraphicsView> _childView;
     QPointer<QGraphicsScene> _childScene;
+    QSharedPointer<ISceneState> _childState; /**< This controls the state of the child scene by overriding mouse functionality */
     QSharedPointer<MapTileSource> _tileSource;
 
     QSet<MapTileGraphicsObject *> _tileObjects;

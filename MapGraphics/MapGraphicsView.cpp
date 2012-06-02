@@ -14,6 +14,9 @@
 #include "guts/PrivateQGraphicsScene.h"
 #include "guts/PrivateQGraphicsView.h"
 #include "guts/Conversions.h"
+#include "ISceneState.h"
+#include "DefaultSceneState.h"
+#include "ViewPanState.h"
 
 MapGraphicsView::MapGraphicsView(MapGraphicsScene *scene, QWidget *parent) :
     QWidget(parent)
@@ -21,6 +24,32 @@ MapGraphicsView::MapGraphicsView(MapGraphicsScene *scene, QWidget *parent) :
     //Setup the given scene and set the default zoomLevel to 3
     this->setScene(scene);
     _zoomLevel = 2;
+
+    //Use the DefaultSceneState
+    QSharedPointer<ISceneState> state = QSharedPointer<ISceneState>(new ViewPanState());
+    this->setSceneState(state);
+
+    //The default drag mode allows us to drag the map around to move the view
+    this->setDragMode(MapGraphicsView::ScrollHandDrag);
+
+    //Start the timer that will cause the tiles to periodically move to follow the view
+    QTimer * renderTimer = new QTimer(this);
+    connect(renderTimer,
+            SIGNAL(timeout()),
+            this,
+            SLOT(renderTiles()));
+    renderTimer->start(200);
+}
+
+MapGraphicsView::MapGraphicsView(QSharedPointer<ISceneState> state, MapGraphicsScene *scene, QWidget *parent) :
+    QWidget(parent)
+{
+    //Setup the given scene and set the default zoomLevel to 3
+    this->setScene(scene);
+    _zoomLevel = 2;
+
+    //Use the specified scene state
+    this->setSceneState(state);
 
     //The default drag mode allows us to drag the map around to move the view
     this->setDragMode(MapGraphicsView::ScrollHandDrag);
@@ -146,6 +175,13 @@ void MapGraphicsView::setScene(MapGraphicsScene * scene)
     PrivateQGraphicsScene * childScene = new PrivateQGraphicsScene(scene,
                                                                    this,
                                                                    this);
+    //Make sure the new Scene is connected to the view SceneState
+    childScene->setSceneState(_childState);
+    connect(this,
+            SIGNAL(sceneStateChanged(QSharedPointer<ISceneState>)),
+            childScene,
+            SLOT(handleSceneStateChanged(QSharedPointer<ISceneState>)));
+
     //The QGraphicsScene needs to know when our zoom level changes so it can notify objects
     connect(this,
             SIGNAL(zoomLevelChanged(quint8)),
@@ -218,6 +254,13 @@ void MapGraphicsView::setTileSource(QSharedPointer<MapTileSource> tSource)
     //Update our tile displays (if any) about the new tile source
     foreach(MapTileGraphicsObject * tileObject, _tileObjects)
         tileObject->setTileSource(tSource);
+}
+
+void MapGraphicsView::setSceneState(QSharedPointer<ISceneState> state)
+{
+    state->setView(this->_childView);
+    this->_childState = state;
+    emit(this->sceneStateChanged(_childState));
 }
 
 quint8 MapGraphicsView::zoomLevel() const

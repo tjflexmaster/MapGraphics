@@ -9,6 +9,9 @@
 #include "guts/CompositeTileSourceConfigurationWidget.h"
 #include "CircleObject.h"
 #include "PolygonObject.h"
+#include "ViewPanState.h"
+#include "DefaultSceneState.h"
+#include "ISceneState.h"
 
 #include <QSharedPointer>
 #include <QtDebug>
@@ -22,7 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Setup the MapGraphics scene and view
     MapGraphicsScene * scene = new MapGraphicsScene(this);
-    MapGraphicsView * view = new MapGraphicsView(scene,this);
+    QSharedPointer<ISceneState> state(new ViewPanState(), &QObject::deleteLater);
+    MapGraphicsView * view = new MapGraphicsView(state, scene,this);
 
     //The view will be our central widget
     this->setCentralWidget(view);
@@ -41,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     CompositeTileSourceConfigurationWidget * tileConfigWidget = new CompositeTileSourceConfigurationWidget(composite.toWeakRef(),
                                                                                          this->ui->dockWidget);
     this->ui->dockWidget->setWidget(tileConfigWidget);
-    delete this->ui->dockWidgetContents;
+    //delete this->ui->dockWidgetContents;
 
     QPolygonF poly;
     poly << QPointF(-111.658752,40.255456) << QPointF(-111.643386,40.256285) << QPointF(-111.645773,40.244085) << QPointF(-111.656187,40.244183);
@@ -50,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     view->setZoomLevel(14);
     view->centerOn(polyObj);
+
 }
 
 MainWindow::~MainWindow()

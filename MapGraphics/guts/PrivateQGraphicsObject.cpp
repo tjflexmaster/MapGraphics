@@ -221,12 +221,12 @@ void PrivateQGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (_mgObj.isNull())
         return;
 
-    QGraphicsObject::mouseMoveEvent(event);
-    return;
+//    QGraphicsObject::mouseMoveEvent(event);
+//    return;
 
     _mgObj->mouseMoveEvent(event);
 
-    qDebug() << "move" <<  event->isAccepted();
+    qDebug() << "object move" <<  event->isAccepted();
 
     if (!event->isAccepted())
         QGraphicsObject::mouseMoveEvent(event);

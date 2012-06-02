@@ -4,6 +4,8 @@
 #include <QSet>
 
 #include "MapGraphicsScene.h"
+#include "ISceneState.h"
+#include <QSharedPointer>
 
 PrivateQGraphicsScene::PrivateQGraphicsScene(MapGraphicsScene * mgScene,
                                              PrivateQGraphicsInfoSource *infoSource,
@@ -76,6 +78,11 @@ void PrivateQGraphicsScene::handleSelectionChanged()
 
 }
 
+void PrivateQGraphicsScene::handleSceneStateChanged(QSharedPointer<ISceneState> state)
+{
+    _sceneState = state;
+}
+
 //private
 void PrivateQGraphicsScene::setMapGraphicsScene(MapGraphicsScene *mgScene)
 {
@@ -97,3 +104,109 @@ void PrivateQGraphicsScene::setMapGraphicsScene(MapGraphicsScene *mgScene)
             SLOT(handleMGObjectRemoved(MapGraphicsObject*)));
 
 }
+
+//private
+void PrivateQGraphicsScene::setSceneState(QSharedPointer<ISceneState> state)
+{
+    //First remove the old state
+    if ( !_sceneState.isNull() )
+        _sceneState.clear();
+
+    //Now set the new state
+    _sceneState = state;
+
+//    if ( _sceneState.isNull() ) {
+//        qWarning() << this << "got a null State";
+//        return;
+//    }
+}
+
+
+//protected
+void PrivateQGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "scene mouse press";
+    if (_sceneState.isNull())
+        return;
+
+    _sceneState->mousePressEvent(event);
+
+
+
+    if (!event->isAccepted())
+        QGraphicsScene::mousePressEvent(event);
+}
+
+//protected
+void PrivateQGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "scene mouse double click";
+
+    if (_sceneState.isNull())
+        return;
+
+    _sceneState->mouseDoubleClickEvent(event);
+
+
+    if (!event->isAccepted())
+        QGraphicsScene::mouseDoubleClickEvent(event);
+}
+
+//protected
+void PrivateQGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "scene move";
+
+    if (_sceneState.isNull())
+        return;
+
+    _sceneState->mouseMoveEvent(event);
+
+
+    if (!event->isAccepted())
+        QGraphicsScene::mouseMoveEvent(event);
+}
+
+//protected
+void PrivateQGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "mouse release";
+
+    if (_sceneState.isNull())
+        return;
+
+    _sceneState->mouseReleaseEvent(event);
+
+
+    if (!event->isAccepted())
+        QGraphicsScene::mouseReleaseEvent(event);
+}
+
+//protected
+void PrivateQGraphicsScene::keyPressEvent(QKeyEvent *event)
+{
+    if (_sceneState.isNull())
+        return;
+
+    _sceneState->keyPressEvent(event);
+
+    qDebug() << "key press" <<  event->isAccepted();
+
+    if (!event->isAccepted())
+        QGraphicsScene::keyPressEvent(event);
+}
+
+//protected
+void PrivateQGraphicsScene::keyReleaseEvent(QKeyEvent *event)
+{
+    if (_sceneState.isNull())
+        return;
+
+    _sceneState->keyReleaseEvent(event);
+
+    qDebug() << "key release" <<  event->isAccepted();
+
+    if (!event->isAccepted())
+        QGraphicsScene::keyReleaseEvent(event);
+}
+
