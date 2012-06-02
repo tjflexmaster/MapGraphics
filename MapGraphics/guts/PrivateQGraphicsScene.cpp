@@ -4,7 +4,7 @@
 #include <QSet>
 
 #include "MapGraphicsScene.h"
-#include "ISceneState.h"
+#include "IMapState.h"
 #include <QSharedPointer>
 
 PrivateQGraphicsScene::PrivateQGraphicsScene(MapGraphicsScene * mgScene,
@@ -78,9 +78,9 @@ void PrivateQGraphicsScene::handleSelectionChanged()
 
 }
 
-void PrivateQGraphicsScene::handleSceneStateChanged(QSharedPointer<ISceneState> state)
+void PrivateQGraphicsScene::handleMapStateChanged(QSharedPointer<IMapState> state)
 {
-    _sceneState = state;
+    setMapState(state);
 }
 
 //private
@@ -106,35 +106,15 @@ void PrivateQGraphicsScene::setMapGraphicsScene(MapGraphicsScene *mgScene)
 }
 
 //private
-void PrivateQGraphicsScene::setSceneState(QSharedPointer<ISceneState> state)
+void PrivateQGraphicsScene::setMapState(QSharedPointer<IMapState> state)
 {
     //First remove the old state
-    if ( !_sceneState.isNull() )
-        _sceneState.clear();
+    if ( !_mapState.isNull() )
+        _mapState.clear();
 
     //Now set the new state
-    _sceneState = state;
+    _mapState = state;
 
-//    if ( _sceneState.isNull() ) {
-//        qWarning() << this << "got a null State";
-//        return;
-//    }
-}
-
-
-//protected
-void PrivateQGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    qDebug() << "scene mouse press";
-    if (_sceneState.isNull())
-        return;
-
-    _sceneState->mousePressEvent(event);
-
-
-
-    if (!event->isAccepted())
-        QGraphicsScene::mousePressEvent(event);
 }
 
 //protected
@@ -142,10 +122,10 @@ void PrivateQGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *even
 {
     qDebug() << "scene mouse double click";
 
-    if (_sceneState.isNull())
+    if (_mapState.isNull())
         return;
 
-    _sceneState->mouseDoubleClickEvent(event);
+    _mapState->mouseDoubleClickEvent(event, this);
 
 
     if (!event->isAccepted())
@@ -153,14 +133,30 @@ void PrivateQGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *even
 }
 
 //protected
+void PrivateQGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "scene mouse press";
+    if (_mapState.isNull())
+        return;
+
+    _mapState->mousePressEvent(event, this);
+
+    //Default Mouse Event if it is ignored by the State
+    if (!event->isAccepted())
+        QGraphicsScene::mousePressEvent(event);
+}
+
+
+
+//protected
 void PrivateQGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "scene move";
 
-    if (_sceneState.isNull())
+    if (_mapState.isNull())
         return;
 
-    _sceneState->mouseMoveEvent(event);
+    _mapState->mouseMoveEvent(event, this);
 
 
     if (!event->isAccepted())
@@ -172,10 +168,10 @@ void PrivateQGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "mouse release";
 
-    if (_sceneState.isNull())
+    if (_mapState.isNull())
         return;
 
-    _sceneState->mouseReleaseEvent(event);
+    _mapState->mouseReleaseEvent(event, this);
 
 
     if (!event->isAccepted())
@@ -185,12 +181,11 @@ void PrivateQGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //protected
 void PrivateQGraphicsScene::keyPressEvent(QKeyEvent *event)
 {
-    if (_sceneState.isNull())
+    qDebug() << "scene key press";
+    if (_mapState.isNull())
         return;
 
-    _sceneState->keyPressEvent(event);
-
-    qDebug() << "key press" <<  event->isAccepted();
+    _mapState->keyPressEvent(event, this);
 
     if (!event->isAccepted())
         QGraphicsScene::keyPressEvent(event);
@@ -199,12 +194,11 @@ void PrivateQGraphicsScene::keyPressEvent(QKeyEvent *event)
 //protected
 void PrivateQGraphicsScene::keyReleaseEvent(QKeyEvent *event)
 {
-    if (_sceneState.isNull())
+    qDebug() << "key release";
+    if (_mapState.isNull())
         return;
 
-    _sceneState->keyReleaseEvent(event);
-
-    qDebug() << "key release" <<  event->isAccepted();
+    _mapState->keyReleaseEvent(event, this);
 
     if (!event->isAccepted())
         QGraphicsScene::keyReleaseEvent(event);

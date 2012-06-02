@@ -1,17 +1,19 @@
-#ifndef VIEWPANSTATE_H
-#define VIEWPANSTATE_H
+#ifndef DEFAULTSCENESTATE_H
+#define DEFAULTSCENESTATE_H
 
-#include "ISceneState.h"
-#include <QObject>
+#include "IMapState.h"
+#include <QKeyEvent>
+#include <QGraphicsSceneMouseEvent>
+
 #include "MapGraphics_global.h"
 
-class MAPGRAPHICSSHARED_EXPORT ViewPanState : public ISceneState
+class MAPGRAPHICSSHARED_EXPORT DefaultSceneState : public IMapState
 {
     Q_OBJECT
-    Q_INTERFACES(ISceneState)
+    Q_INTERFACES(IMapState)
 public:
-    explicit ViewPanState(ISceneState *parent = 0);
-
+    explicit DefaultSceneState(DefaultSceneState *parent = 0);
+    
     void setView( QGraphicsView* view );
     void keyPressEvent( QKeyEvent* event );
     void keyReleaseEvent( QKeyEvent* event);
@@ -26,14 +28,11 @@ public:
     void mousePressEvent( QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent( QGraphicsSceneMouseEvent* event);
 
+
 signals:
     
 public slots:
     
-private:
-    QGraphicsView* _view;
-    qint32 _pan_x, _pan_y;
-    bool _panning;
 };
 
-#endif // VIEWPANSTATE_H
+#endif // DEFAULTSCENESTATE_H

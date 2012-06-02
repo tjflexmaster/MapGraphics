@@ -15,6 +15,8 @@ class MAPGRAPHICSSHARED_EXPORT IMapState : public QObject
     Q_OBJECT
 public:
 
+    virtual void viewKeyPressEvent( QKeyEvent* event, QGraphicsView* view) = 0;
+    virtual void viewKeyReleaseEvent( QKeyEvent* event, QGraphicsView* view) = 0;
     virtual void viewMouseDoubleClickEvent( QMouseEvent* event, QGraphicsView* view) = 0;
     virtual void viewMousePressEvent( QMouseEvent* event, QGraphicsView* view) = 0;
     virtual void viewMouseMoveEvent( QMouseEvent* event, QGraphicsView* view) = 0;

@@ -19,7 +19,7 @@
 
 #include "guts/MapTileGraphicsObject.h"
 #include "guts/PrivateQGraphicsInfoSource.h"
-#include "ISceneState.h"
+#include "IMapState.h"
 
 class MAPGRAPHICSSHARED_EXPORT MapGraphicsView : public QWidget, public PrivateQGraphicsInfoSource
 {
@@ -40,7 +40,7 @@ public:
 
 public:
     explicit MapGraphicsView(MapGraphicsScene * scene=0, QWidget * parent = 0);
-    MapGraphicsView(QSharedPointer<ISceneState> state, MapGraphicsScene * scene=0, QWidget * parent = 0);
+    MapGraphicsView(QSharedPointer<IMapState> state, MapGraphicsScene * scene=0, QWidget * parent = 0);
     virtual ~MapGraphicsView();
 
     void centerOn(const QPointF& pos);
@@ -66,7 +66,14 @@ public:
      */
     void setTileSource(QSharedPointer<MapTileSource> tSource);
 
-    void setSceneState(QSharedPointer<ISceneState> state);
+    /**
+     * @brief Changes the state of the Map.  This State is propagated to
+     * the child view and scene so that all mouse and keyboard events
+     * are handled by the IMapState object.
+     *
+     * @param state
+     */
+    void setMapState(QSharedPointer<IMapState> state);
 
     //pure-virtual from PrivateQGraphicsInfoSource
     quint8 zoomLevel() const;
@@ -77,7 +84,7 @@ public:
     
 signals:
     void zoomLevelChanged(quint8 nZoom);
-    void sceneStateChanged(QSharedPointer<ISceneState> state);
+    void mapStateChanged(QSharedPointer<IMapState> state);
     
 public slots:
 
@@ -96,7 +103,7 @@ private:
     QPointer<MapGraphicsScene> _scene;
     QPointer<QGraphicsView> _childView;
     QPointer<QGraphicsScene> _childScene;
-    QSharedPointer<ISceneState> _childState; /**< This controls the state of the child scene by overriding mouse functionality */
+    QSharedPointer<IMapState> _mapState; /**< Customizes mouse events for the view and scene. */
     QSharedPointer<MapTileSource> _tileSource;
 
     QSet<MapTileGraphicsObject *> _tileObjects;

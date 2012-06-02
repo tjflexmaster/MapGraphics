@@ -4,6 +4,8 @@
 #include <QContextMenuEvent>
 #include <QtDebug>
 #include <QScrollBar>
+#include <QSharedPointer>
+#include "IMapState.h"
 
 PrivateQGraphicsView::PrivateQGraphicsView(QWidget *parent) :
     QGraphicsView(parent)
@@ -24,6 +26,23 @@ PrivateQGraphicsView::~PrivateQGraphicsView()
 {
 }
 
+void PrivateQGraphicsView::setMapState(QSharedPointer<IMapState> state)
+{
+    //Clear out the current map state if it isn't Null
+    //This should cause the shared pointer to delete the object if no one else is using it
+    if ( !_mapState.isNull() )
+        _mapState.clear();
+
+    //Use the new shared pointer
+    _mapState = state;
+
+}
+
+void PrivateQGraphicsView::handleMapStateChanged(QSharedPointer<IMapState> state)
+{
+    setMapState(state);
+}
+
 //protected
 ////virtual from QGraphicsView
 void PrivateQGraphicsView::contextMenuEvent(QContextMenuEvent *event)
@@ -39,45 +58,75 @@ void PrivateQGraphicsView::wheelEvent(QWheelEvent *event)
     this->hadWheelEvent(event);
 }
 
-void PrivateQGraphicsView::mousePressEvent(QMouseEvent *event)
+void PrivateQGraphicsView::keyPressEvent(QKeyEvent *event)
 {
-//    if ( event->button() == Qt::LeftButton ) {
-//        _panning = true;
-//        _pan_x = event->x();
-//        _pan_y = event->y();
-//        setCursor(Qt::ClosedHandCursor);
-//        event->accept();
-//        return;
-//    }
-    event->ignore();
+    qDebug() << "view key press";
+    if (_mapState.isNull())
+        return;
+
+    _mapState->viewKeyPressEvent(event, this);
+
+    if (!event->isAccepted())
+        QGraphicsView::keyPressEvent(event);
+
 }
 
-void PrivateQGraphicsView::mouseMoveEvent(QMouseEvent *event)
+void PrivateQGraphicsView::keyReleaseEvent(QKeyEvent *event)
 {
-//    if ( _panning ) {
-//        horizontalScrollBar()->setValue( horizontalScrollBar()->value() - (event->x() - _pan_x));
-//        verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _pan_y));
-//        _pan_x = event->x();
-//        _pan_y = event->y();
-//        event->accept();
-//        return;
-//    }
-    event->ignore();
-}
+    qDebug() << "view key release";
+    if (_mapState.isNull())
+        return;
 
-void PrivateQGraphicsView::mouseReleaseEvent(QMouseEvent *event)
-{
-//    if ( event->button() == Qt::LeftButton) {
-//        _panning = false;
-//        setCursor(Qt::ArrowCursor);
-//        event->accept();
-//        return;
-//    }
-    event->ignore();
+    _mapState->viewKeyReleaseEvent(event, this);
+
+    if (!event->isAccepted())
+        QGraphicsView::keyReleaseEvent(event);
 }
 
 void PrivateQGraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    event->ignore();
+    qDebug() << "view mouse doubleclick";
+    if (_mapState.isNull())
+        return;
+
+    _mapState->viewMouseDoubleClickEvent(event, this);
+
+    if (!event->isAccepted())
+        QGraphicsView::mouseDoubleClickEvent(event);
 }
 
+void PrivateQGraphicsView::mousePressEvent(QMouseEvent *event)
+{
+    qDebug() << "view mouse press";
+    if (_mapState.isNull())
+        return;
+
+    _mapState->viewMousePressEvent(event, this);
+
+    if (!event->isAccepted())
+        QGraphicsView::mousePressEvent(event);
+}
+
+void PrivateQGraphicsView::mouseMoveEvent(QMouseEvent *event)
+{
+    qDebug() << "view mouse move";
+    if (_mapState.isNull())
+        return;
+
+    _mapState->viewMouseMoveEvent(event, this);
+
+    if (!event->isAccepted())
+        QGraphicsView::mouseMoveEvent(event);
+}
+
+void PrivateQGraphicsView::mouseReleaseEvent(QMouseEvent *event)
+{
+    qDebug() << "view mouse release";
+    if (_mapState.isNull())
+        return;
+
+    _mapState->viewMouseReleaseEvent(event, this);
+
+    if (!event->isAccepted())
+        QGraphicsView::mouseReleaseEvent(event);
+}

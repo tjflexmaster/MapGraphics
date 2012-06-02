@@ -11,30 +11,6 @@ TEMPLATE = lib
 
 DEFINES += MAPGRAPHICS_LIBRARY
 
-SOURCES += MapGraphicsScene.cpp \
-    MapGraphicsObject.cpp \
-    MapGraphicsView.cpp \
-    guts/PrivateQGraphicsScene.cpp \
-    guts/PrivateQGraphicsObject.cpp \
-    guts/Conversions.cpp \
-    MapTileSource.cpp \
-    tileSources/GridTileSource.cpp \
-    guts/MapTileGraphicsObject.cpp \
-    guts/PrivateQGraphicsView.cpp \
-    tileSources/OSMTileSource.cpp \
-    guts/MapGraphicsNetwork.cpp \
-    tileSources/CompositeTileSource.cpp \
-    guts/SQLiteKeyValueStore.cpp \
-    guts/MapTileLayerListModel.cpp \
-    guts/MapTileSourceDelegate.cpp \
-    guts/CompositeTileSourceConfigurationWidget.cpp \
-    CircleObject.cpp \
-    guts/PrivateQGraphicsInfoSource.cpp \
-    PolygonObject.cpp \
-    ISceneState.cpp \
-    DefaultSceneState.cpp \
-    ViewPanState.cpp
-
 HEADERS += MapGraphicsScene.h\
         MapGraphics_global.h \
     MapGraphicsObject.h \
@@ -56,9 +32,33 @@ HEADERS += MapGraphicsScene.h\
     CircleObject.h \
     guts/PrivateQGraphicsInfoSource.h \
     PolygonObject.h \
-    DefaultSceneState.h \
-    ViewPanState.h \
-    IMapState.h
+    IMapState.h \
+    mapStates/ViewPanState.h \
+    mapStates/DefaultMapState.h
+
+SOURCES += MapGraphicsScene.cpp \
+    MapGraphicsObject.cpp \
+    MapGraphicsView.cpp \
+    guts/PrivateQGraphicsScene.cpp \
+    guts/PrivateQGraphicsObject.cpp \
+    guts/Conversions.cpp \
+    MapTileSource.cpp \
+    tileSources/GridTileSource.cpp \
+    guts/MapTileGraphicsObject.cpp \
+    guts/PrivateQGraphicsView.cpp \
+    tileSources/OSMTileSource.cpp \
+    guts/MapGraphicsNetwork.cpp \
+    tileSources/CompositeTileSource.cpp \
+    guts/SQLiteKeyValueStore.cpp \
+    guts/MapTileLayerListModel.cpp \
+    guts/MapTileSourceDelegate.cpp \
+    guts/CompositeTileSourceConfigurationWidget.cpp \
+    CircleObject.cpp \
+    guts/PrivateQGraphicsInfoSource.cpp \
+    PolygonObject.cpp \
+    IMapState.cpp \
+    mapStates/ViewPanState.cpp \
+    mapStates/DefaultMapState.cpp
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

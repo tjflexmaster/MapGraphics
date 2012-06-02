@@ -11,7 +11,7 @@
 #include "MapGraphicsObject.h"
 #include "PrivateQGraphicsObject.h"
 #include "guts/PrivateQGraphicsInfoSource.h"
-#include "ISceneState.h"
+#include "IMapState.h"
 
 class PrivateQGraphicsScene : public QGraphicsScene
 {
@@ -25,13 +25,13 @@ public:
      *
      * @param state
      */
-    void setSceneState(QSharedPointer<ISceneState> state);
+    void setMapState(QSharedPointer<IMapState> state);
 
 protected:
     void keyPressEvent( QKeyEvent* event );
     void keyReleaseEvent( QKeyEvent* event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
@@ -43,7 +43,7 @@ private slots:
     void handleMGObjectAdded(MapGraphicsObject *);
     void handleMGObjectRemoved(MapGraphicsObject *);
     void handleZoomLevelChanged();
-    void handleSceneStateChanged(QSharedPointer<ISceneState>);
+    void handleMapStateChanged(QSharedPointer<IMapState>);
     void handleSelectionChanged();
 
 private:
@@ -54,7 +54,7 @@ private:
     PrivateQGraphicsInfoSource * _infoSource;
 
     QHash<MapGraphicsObject *,PrivateQGraphicsObject *> _mgToqg;
-    QSharedPointer<ISceneState> _sceneState;
+    QSharedPointer<IMapState> _mapState;
     
 };
 

@@ -9,9 +9,9 @@
 #include "guts/CompositeTileSourceConfigurationWidget.h"
 #include "CircleObject.h"
 #include "PolygonObject.h"
-#include "ViewPanState.h"
-#include "DefaultSceneState.h"
-#include "ISceneState.h"
+#include "mapStates/ViewPanState.h"
+#include "mapStates/DefaultMapState.h"
+#include "IMapState.h"
 
 #include <QSharedPointer>
 #include <QtDebug>
@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Setup the MapGraphics scene and view
     MapGraphicsScene * scene = new MapGraphicsScene(this);
-    QSharedPointer<ISceneState> state(new ViewPanState(), &QObject::deleteLater);
+    QSharedPointer<IMapState> state(new DefaultMapState(), &QObject::deleteLater);
     MapGraphicsView * view = new MapGraphicsView(state, scene,this);
 
     //The view will be our central widget

@@ -14,9 +14,9 @@
 #include "guts/PrivateQGraphicsScene.h"
 #include "guts/PrivateQGraphicsView.h"
 #include "guts/Conversions.h"
-#include "ISceneState.h"
-#include "DefaultSceneState.h"
-#include "ViewPanState.h"
+#include "IMapState.h"
+#include "mapStates/DefaultMapState.h"
+#include "mapStates/ViewPanState.h"
 
 MapGraphicsView::MapGraphicsView(MapGraphicsScene *scene, QWidget *parent) :
     QWidget(parent)
@@ -26,8 +26,8 @@ MapGraphicsView::MapGraphicsView(MapGraphicsScene *scene, QWidget *parent) :
     _zoomLevel = 2;
 
     //Use the DefaultSceneState
-    QSharedPointer<ISceneState> state = QSharedPointer<ISceneState>(new ViewPanState());
-    this->setSceneState(state);
+    QSharedPointer<IMapState> state = QSharedPointer<IMapState>(new DefaultMapState());
+    this->setMapState(state);
 
     //The default drag mode allows us to drag the map around to move the view
     this->setDragMode(MapGraphicsView::ScrollHandDrag);
@@ -41,7 +41,7 @@ MapGraphicsView::MapGraphicsView(MapGraphicsScene *scene, QWidget *parent) :
     renderTimer->start(200);
 }
 
-MapGraphicsView::MapGraphicsView(QSharedPointer<ISceneState> state, MapGraphicsScene *scene, QWidget *parent) :
+MapGraphicsView::MapGraphicsView(QSharedPointer<IMapState> state, MapGraphicsScene *scene, QWidget *parent) :
     QWidget(parent)
 {
     //Setup the given scene and set the default zoomLevel to 3
@@ -49,7 +49,7 @@ MapGraphicsView::MapGraphicsView(QSharedPointer<ISceneState> state, MapGraphicsS
     _zoomLevel = 2;
 
     //Use the specified scene state
-    this->setSceneState(state);
+    this->setMapState(state);
 
     //The default drag mode allows us to drag the map around to move the view
     this->setDragMode(MapGraphicsView::ScrollHandDrag);
@@ -175,12 +175,12 @@ void MapGraphicsView::setScene(MapGraphicsScene * scene)
     PrivateQGraphicsScene * childScene = new PrivateQGraphicsScene(scene,
                                                                    this,
                                                                    this);
-    //Make sure the new Scene is connected to the view SceneState
-    childScene->setSceneState(_childState);
+    //Make sure the new Scene is connected to the view MapState
+    childScene->setMapState(_mapState);
     connect(this,
-            SIGNAL(sceneStateChanged(QSharedPointer<ISceneState>)),
+            SIGNAL(mapStateChanged(QSharedPointer<IMapState>)),
             childScene,
-            SLOT(handleSceneStateChanged(QSharedPointer<ISceneState>)));
+            SLOT(handleMapStateChanged(QSharedPointer<IMapState>)));
 
     //The QGraphicsScene needs to know when our zoom level changes so it can notify objects
     connect(this,
@@ -198,6 +198,13 @@ void MapGraphicsView::setScene(MapGraphicsScene * scene)
             SIGNAL(hadContextMenuEvent(QContextMenuEvent*)),
             this,
             SLOT(handleChildViewContextMenu(QContextMenuEvent*)));
+
+    //Connect new View to the correct MapState
+    childView->setMapState(_mapState);
+    connect(this,
+            SIGNAL(mapStateChanged(QSharedPointer<IMapState>)),
+            childView,
+            SLOT(handleMapStateChanged(QSharedPointer<IMapState>)));
 
     //Insert new stuff
     if (this->layout() != 0)
@@ -256,11 +263,10 @@ void MapGraphicsView::setTileSource(QSharedPointer<MapTileSource> tSource)
         tileObject->setTileSource(tSource);
 }
 
-void MapGraphicsView::setSceneState(QSharedPointer<ISceneState> state)
+void MapGraphicsView::setMapState(QSharedPointer<IMapState> state)
 {
-    state->setView(this->_childView);
-    this->_childState = state;
-    emit(this->sceneStateChanged(_childState));
+    this->_mapState = state;
+    emit(this->mapStateChanged(_mapState));
 }
 
 quint8 MapGraphicsView::zoomLevel() const
