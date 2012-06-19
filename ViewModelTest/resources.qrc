@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>assets/ic_menu_anchor.png</file>
+        <file>assets/ic_menu_car.png</file>
+        <file>assets/ic_menu_cards.png</file>
+        <file>assets/ic_menu_dice.png</file>
+        <file>assets/ic_menu_globe.png</file>
+        <file>assets/ic_menu_resize.png</file>
+        <file>assets/ic_menu_umbrella.png</file>
+    </qresource>
+</RCC>

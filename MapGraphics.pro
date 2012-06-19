@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += MapGraphics \
-    TestApp
+    TestApp \
+    ViewModelTest
 
 TestApp.depends += MapGraphics

@@ -13,21 +13,8 @@
   <property name="windowTitle">
    <string>TestApp</string>
   </property>
-  <widget class="QWidget" name="centralWidget"/>
-  <widget class="QDockWidget" name="dockWidget">
-   <property name="windowTitle">
-    <string>Layers</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents"/>
-  </widget>
-  <widget class="QDockWidget" name="dockWidget_2">
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2"/>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout"/>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

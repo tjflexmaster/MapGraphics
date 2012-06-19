@@ -34,7 +34,11 @@ HEADERS += MapGraphicsScene.h\
     PolygonObject.h \
     IMapState.h \
     mapStates/ViewPanState.h \
-    mapStates/DefaultMapState.h
+    mapStates/DefaultMapState.h \
+    gui/mapstate/IMapStateWidgetController.h \
+    gui/mapstate/IMapStateWidgetView.h \
+    gui/mapstate/MapStateWidgetController.h \
+    gui/mapstate/MapStateWidgetView.h
 
 SOURCES += MapGraphicsScene.cpp \
     MapGraphicsObject.cpp \
@@ -58,7 +62,11 @@ SOURCES += MapGraphicsScene.cpp \
     PolygonObject.cpp \
     IMapState.cpp \
     mapStates/ViewPanState.cpp \
-    mapStates/DefaultMapState.cpp
+    mapStates/DefaultMapState.cpp \
+    gui/mapstate/IMapStateWidgetController.cpp \
+    gui/mapstate/IMapStateWidgetView.cpp \
+    gui/mapstate/MapStateWidgetController.cpp \
+    gui/mapstate/MapStateWidgetView.cpp
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
@@ -80,4 +88,5 @@ unix:!symbian {
 }
 
 FORMS += \
-    guts/CompositeTileSourceConfigurationWidget.ui
+    guts/CompositeTileSourceConfigurationWidget.ui \
+    gui/mapstate/MapStateWidgetView.ui
